@@ -101,8 +101,13 @@ static void wifi_init_sta(void)
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL));
 
     wifi_config_t wifi_config = { 0 };
+    /* NOTE: WIFI_SSID/WIFI_PASSWORD come from Kconfig (see main/Kconfig.projbuild).
+     * Do not commit real credentials to sdkconfig.defaults; the generated
+     * `sdkconfig` file (which may contain real values) is already gitignored. */
     strncpy((char *)wifi_config.sta.ssid, CONFIG_WIFI_SSID, sizeof(wifi_config.sta.ssid) - 1);
+    wifi_config.sta.ssid[sizeof(wifi_config.sta.ssid) - 1] = '\0';
     strncpy((char *)wifi_config.sta.password, CONFIG_WIFI_PASSWORD, sizeof(wifi_config.sta.password) - 1);
+    wifi_config.sta.password[sizeof(wifi_config.sta.password) - 1] = '\0';
     wifi_config.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
 
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
@@ -141,8 +146,13 @@ static void micro_ros_task(void *arg)
     }
 
     /* Configure the micro-ROS UDP transport against the configured agent. */
-    char agent_port_str[6];
-    snprintf(agent_port_str, sizeof(agent_port_str), "%d", CONFIG_MICRO_ROS_AGENT_PORT);
+    char agent_port_str[8];
+    int port_len = snprintf(agent_port_str, sizeof(agent_port_str), "%d", CONFIG_MICRO_ROS_AGENT_PORT);
+    if (port_len < 0 || (size_t)port_len >= sizeof(agent_port_str)) {
+        ESP_LOGE(TAG, "Invalid micro-ROS agent port configuration");
+        vTaskDelete(NULL);
+        return;
+    }
 
     rcl_allocator_t allocator = rcl_get_default_allocator();
     rclc_support_t support;

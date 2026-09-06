@@ -20,7 +20,10 @@ CONFIG_ESP32_WIFI_DYNAMIC_TX_BUFFER_NUM=32
 CONFIG_LOG_DEFAULT_LEVEL_INFO=y
 
 # Default ROS 2 / micro-ROS network configuration (can be overridden with
-# idf.py menuconfig, see main/Kconfig.projbuild)
+# idf.py menuconfig, see main/Kconfig.projbuild).
+# These are placeholder values only - never commit real Wi-Fi credentials
+# here. Override them locally via `idf.py menuconfig` (stored in the
+# gitignored `sdkconfig` file) instead.
 CONFIG_WIFI_SSID="myssid"
 CONFIG_WIFI_PASSWORD="mypassword"
 CONFIG_MICRO_ROS_AGENT_IP="192.168.1.100"

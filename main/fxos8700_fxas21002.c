@@ -87,6 +87,8 @@ esp_err_t imu_init(const imu_config_t *config)
 
     err = i2c_driver_install(s_i2c_port, I2C_MODE_MASTER, 0, 0, 0);
     if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
+        /* ESP_ERR_INVALID_STATE means the I2C driver was already installed
+         * (e.g. re-initialization); that is expected and safe to ignore. */
         ESP_LOGE(TAG, "i2c_driver_install failed: %s", esp_err_to_name(err));
         return err;
     }
@@ -99,7 +101,9 @@ esp_err_t imu_init(const imu_config_t *config)
         return err;
     }
     if (whoami != FXOS8700_WHOAMI_VALUE) {
-        ESP_LOGW(TAG, "Unexpected FXOS8700 WHO_AM_I: 0x%02X", whoami);
+        ESP_LOGE(TAG, "Unexpected FXOS8700 WHO_AM_I: 0x%02X (expected 0x%02X)",
+                 whoami, FXOS8700_WHOAMI_VALUE);
+        return ESP_ERR_NOT_FOUND;
     }
 
     /* Verify FXAS21002 identity. */
@@ -109,24 +113,50 @@ esp_err_t imu_init(const imu_config_t *config)
         return err;
     }
     if (whoami != FXAS21002_WHOAMI_VALUE) {
-        ESP_LOGW(TAG, "Unexpected FXAS21002 WHO_AM_I: 0x%02X", whoami);
+        ESP_LOGE(TAG, "Unexpected FXAS21002 WHO_AM_I: 0x%02X (expected 0x%02X)",
+                 whoami, FXAS21002_WHOAMI_VALUE);
+        return ESP_ERR_NOT_FOUND;
     }
 
     /* --- Configure FXOS8700 --- */
     /* Put into standby to allow configuration. */
-    ESP_ERROR_CHECK(i2c_write_reg(FXOS8700_I2C_ADDR, FXOS8700_REG_CTRL_REG1, 0x00));
+    err = i2c_write_reg(FXOS8700_I2C_ADDR, FXOS8700_REG_CTRL_REG1, 0x00);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set FXOS8700 standby: %s", esp_err_to_name(err));
+        return err;
+    }
     /* Full scale range +-2g. */
-    ESP_ERROR_CHECK(i2c_write_reg(FXOS8700_I2C_ADDR, FXOS8700_REG_XYZ_DATA_CFG, 0x00));
+    err = i2c_write_reg(FXOS8700_I2C_ADDR, FXOS8700_REG_XYZ_DATA_CFG, 0x00);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set FXOS8700 range: %s", esp_err_to_name(err));
+        return err;
+    }
     /* Active mode, ODR = 100 Hz (bits 5:3 = 000), normal (no low noise). */
-    ESP_ERROR_CHECK(i2c_write_reg(FXOS8700_I2C_ADDR, FXOS8700_REG_CTRL_REG1, 0x01));
+    err = i2c_write_reg(FXOS8700_I2C_ADDR, FXOS8700_REG_CTRL_REG1, 0x01);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to activate FXOS8700: %s", esp_err_to_name(err));
+        return err;
+    }
 
     /* --- Configure FXAS21002 --- */
     /* Reset to standby before configuration. */
-    ESP_ERROR_CHECK(i2c_write_reg(FXAS21002_I2C_ADDR, FXAS21002_REG_CTRL_REG1, 0x00));
+    err = i2c_write_reg(FXAS21002_I2C_ADDR, FXAS21002_REG_CTRL_REG1, 0x00);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set FXAS21002 standby: %s", esp_err_to_name(err));
+        return err;
+    }
     /* Full scale range 250 dps (bits 1:0 = 11). */
-    ESP_ERROR_CHECK(i2c_write_reg(FXAS21002_I2C_ADDR, FXAS21002_REG_CTRL_REG0, 0x03));
+    err = i2c_write_reg(FXAS21002_I2C_ADDR, FXAS21002_REG_CTRL_REG0, 0x03);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set FXAS21002 range: %s", esp_err_to_name(err));
+        return err;
+    }
     /* Active mode, ODR = 100 Hz (bits 4:2 = 010). */
-    ESP_ERROR_CHECK(i2c_write_reg(FXAS21002_I2C_ADDR, FXAS21002_REG_CTRL_REG1, 0x0E));
+    err = i2c_write_reg(FXAS21002_I2C_ADDR, FXAS21002_REG_CTRL_REG1, 0x0E);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to activate FXAS21002: %s", esp_err_to_name(err));
+        return err;
+    }
 
     ESP_LOGI(TAG, "FXOS8700 + FXAS21002 IMU initialized on I2C port %d (SDA=%d, SCL=%d)",
              s_i2c_port, config->sda_gpio, config->scl_gpio);
