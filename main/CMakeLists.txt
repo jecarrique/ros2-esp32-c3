@@ -1,0 +1,13 @@
+idf_component_register(
+    SRCS
+        "main.c"
+        "fxos8700_fxas21002.c"
+    INCLUDE_DIRS
+        "."
+    REQUIRES
+        micro_ros_espidf_component
+        nvs_flash
+        esp_wifi
+        esp_netif
+        driver
+)

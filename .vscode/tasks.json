@@ -1,0 +1,62 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Project",
+      "type": "shell",
+      "command": "idf.py build",
+      "options": {
+        "env": {
+          "IDF_TARGET": "esp32c3"
+        }
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Flash ESP32-C3",
+      "type": "shell",
+      "command": "idf.py -p ${config:idf.port} flash",
+      "dependsOn": [
+        "Build Project"
+      ],
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Monitor Serial",
+      "type": "shell",
+      "command": "idf.py -p ${config:idf.port} monitor",
+      "group": "test",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "isBackground": true
+    },
+    {
+      "label": "Start Micro-ROS Jazzy Agent (Docker)",
+      "type": "shell",
+      "command": "docker run -it --rm --net=host microros/micro-ros-agent:jazzy udp4 --port 8888",
+      "group": "none",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "isBackground": true
+    }
+  ]
+}
