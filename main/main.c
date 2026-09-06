@@ -8,6 +8,7 @@
  */
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -141,7 +142,8 @@ static void micro_ros_task(void *arg)
         .clk_speed_hz = I2C_CLK_SPEED_HZ,
     };
     esp_err_t imu_err = imu_init(&imu_cfg);
-    if (imu_err != ESP_OK) {
+    bool imu_ready = (imu_err == ESP_OK);
+    if (!imu_ready) {
         ESP_LOGE(TAG, "IMU initialization failed (0x%x). Continuing without IMU data.", imu_err);
     }
 
@@ -201,7 +203,7 @@ static void micro_ros_task(void *arg)
     const TickType_t period_ticks = pdMS_TO_TICKS(PUBLISH_PERIOD_MS);
     while (1) {
         imu_sample_t sample = { 0 };
-        if (imu_read(&sample) == ESP_OK) {
+        if (imu_ready && imu_read(&sample) == ESP_OK) {
             imu_msg.linear_acceleration.x = sample.accel.x;
             imu_msg.linear_acceleration.y = sample.accel.y;
             imu_msg.linear_acceleration.z = sample.accel.z;
