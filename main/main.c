@@ -49,6 +49,12 @@
 /* ---------------------------------------------------------------------- */
 #define PUBLISH_PERIOD_MS    100  /* 10 Hz */
 
+/* ---------------------------------------------------------------------- */
+/*  micro-ROS task configuration                                           */
+/* ---------------------------------------------------------------------- */
+#define MICRO_ROS_TASK_STACK_SIZE   8192
+#define MICRO_ROS_TASK_PRIORITY     5
+
 static const char *TAG = "ros2_esp32_c3";
 
 #define RCCHECK(fn) do { \
@@ -240,5 +246,6 @@ void app_main(void)
 
     wifi_init_sta();
 
-    xTaskCreate(micro_ros_task, "micro_ros_task", 8192, NULL, 5, NULL);
+    xTaskCreate(micro_ros_task, "micro_ros_task", MICRO_ROS_TASK_STACK_SIZE, NULL,
+                MICRO_ROS_TASK_PRIORITY, NULL);
 }
