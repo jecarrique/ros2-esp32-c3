@@ -1,0 +1,40 @@
+{
+  "name": "ESP32-C3 micro-ROS (ESP-IDF v6.0)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "runArgs": [
+    "--privileged"
+  ],
+  "mounts": [
+    "source=/dev,target=/dev,type=bind"
+  ],
+  "remoteUser": "root",
+  "postCreateCommand": "echo 'source /opt/esp/idf/export.sh' >> ~/.bashrc",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "espressif.esp-idf-extension",
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.cmake-tools",
+        "twxs.cmake",
+        "ms-python.python",
+        "streetsidesoftware.code-spell-checker"
+      ],
+      "settings": {
+        "idf.espIdfPath": "/opt/esp/idf",
+        "idf.pythonBinPath": "/opt/esp/python_env/idf6.0_py3.11_env/bin/python",
+        "idf.toolsPath": "/opt/esp/tools",
+        "C_Cpp.default.compilerPath": "/opt/esp/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc",
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "forwardPorts": [],
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb"
+  }
+}

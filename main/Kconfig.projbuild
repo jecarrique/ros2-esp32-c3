@@ -1,0 +1,31 @@
+menu "ROS 2 / micro-ROS Configuration"
+
+    config WIFI_SSID
+        string "Wi-Fi SSID"
+        default "myssid"
+        help
+            SSID (network name) of the Wi-Fi access point that the ESP32-C3
+            will connect to in order to reach the micro-ROS agent.
+
+    config WIFI_PASSWORD
+        string "Wi-Fi Password"
+        default "mypassword"
+        help
+            Wi-Fi password (WPA2) for the SSID configured above. Leave empty
+            for an open network.
+
+    config MICRO_ROS_AGENT_IP
+        string "Micro-ROS Agent IP address"
+        default "192.168.1.100"
+        help
+            IPv4 address of the host machine running the micro-ROS agent
+            (ros2 run micro_ros_agent micro_ros_agent udp4 ...).
+
+    config MICRO_ROS_AGENT_PORT
+        int "Micro-ROS Agent UDP port"
+        default 8888
+        range 1 65535
+        help
+            UDP port on which the micro-ROS agent is listening.
+
+endmenu
