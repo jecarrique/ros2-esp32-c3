@@ -11,7 +11,7 @@
     "source=/dev,target=/dev,type=bind"
   ],
   "remoteUser": "root",
-  "postCreateCommand": "apt-get update && apt-get install -y python3-colcon-common-extensions && echo 'source /opt/esp/idf/export.sh' >> ~/.bashrc",
+  "postCreateCommand": "apt-get update && apt-get install -y python3-colcon-common-extensions && /opt/esp/python_env/idf6.0_py3.12_env/bin/pip install colcon-common-extensions && echo 'source /opt/esp/idf/export.sh' >> ~/.bashrc",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -25,7 +25,7 @@
       ],
       "settings": {
         "idf.espIdfPath": "/opt/esp/idf",
-        "idf.pythonBinPath": "/opt/esp/python_env/idf6.0_py3.11_env/bin/python",
+        "idf.pythonBinPath": "/opt/esp/python_env/idf6.0_py3.12_env/bin/python",
         "idf.toolsPath": "/opt/esp/tools",
         "C_Cpp.default.compilerPath": "/opt/esp/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc",
         "terminal.integrated.defaultProfile.linux": "bash"
