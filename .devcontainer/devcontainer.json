@@ -1,9 +1,6 @@
 {
   "name": "ESP32-C3 micro-ROS (ESP-IDF v6.0)",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": "."
-  },
+  "image": "ghcr.io/jecarrique/ros2-esp32-c3/devcontainer:latest",
   "runArgs": [
     "--privileged"
   ],
@@ -11,7 +8,6 @@
     "source=/dev,target=/dev,type=bind"
   ],
   "remoteUser": "root",
-  "postCreateCommand": "apt-get update && apt-get install -y python3-colcon-common-extensions && /opt/esp/python_env/idf6.0_py3.12_env/bin/pip install colcon-common-extensions && echo 'source /opt/esp/idf/export.sh' >> ~/.bashrc",
   "customizations": {
     "vscode": {
       "extensions": [
