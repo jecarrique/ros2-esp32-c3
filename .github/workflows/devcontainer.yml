@@ -29,4 +29,4 @@ jobs:
         with:
           imageName: ghcr.io/jecarrique/ros2-esp32-c3/devcontainer
           subFolder: .
-          push: true
+          push: 'always'
