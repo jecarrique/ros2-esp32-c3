@@ -11,7 +11,7 @@
     "source=/dev,target=/dev,type=bind"
   ],
   "remoteUser": "root",
-  "postCreateCommand": "echo 'source /opt/esp/idf/export.sh' >> ~/.bashrc",
+  "postCreateCommand": "apt-get update && apt-get install -y python3-colcon-common-extensions && echo 'source /opt/esp/idf/export.sh' >> ~/.bashrc",
   "customizations": {
     "vscode": {
       "extensions": [
