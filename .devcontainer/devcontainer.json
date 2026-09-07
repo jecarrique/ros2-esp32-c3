@@ -1,6 +1,9 @@
 {
   "name": "ESP32-C3 micro-ROS (ESP-IDF v6.0)",
-  "image": "ghcr.io/jecarrique/ros2-esp32-c3/devcontainer:latest",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
   "runArgs": [
     "--privileged"
   ],
