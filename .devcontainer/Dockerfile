@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+# Eliminar compiladores de Xtensa no utilizados para liberar varios gigabytes
+RUN rm -rf /opt/esp/tools/xtensa-esp-elf*
+
 # Make sure the ESP-IDF environment is sourced automatically in every shell
 RUN echo "source /opt/esp/idf/export.sh > /dev/null 2>&1" >> /etc/bash.bashrc
 
