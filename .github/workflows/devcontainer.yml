@@ -2,9 +2,10 @@ name: Build DevContainer Image
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
     paths:
       - '.devcontainer/**'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,7 +14,8 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -22,9 +24,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push DevContainer
+      - name: Build and Push Image
         uses: devcontainers/ci@v0.3
         with:
-          imageName: ghcr.io/${{ github.repository }}/devcontainer
+          imageName: ghcr.io/jecarrique/ros2-esp32-c3/devcontainer
           subFolder: .
           push: true
